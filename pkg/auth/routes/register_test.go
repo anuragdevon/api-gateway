@@ -3,47 +3,90 @@ package routes
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
-	pb "api-gateway/pkg/auth/pb"
+	"api-gateway/pkg/auth/pb"
+	"api-gateway/pkg/auth/routes/mocks"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-
-	"api-gateway/pkg/auth/pb/mocks"
+	"github.com/stretchr/testify/mock"
 )
 
-func TestRegister_Success(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+type AuthServiceClient interface {
+	pb.AuthServiceClient
+}
 
-	mockClient := mocks.NewMockAuthServiceClient(ctrl)
-
+func TestRegister(t *testing.T) {
 	router := gin.Default()
+	t.Run("Register Method to return status 200 StatusOK for successful registration", func(t *testing.T) {
+		mockClient := new(mocks.MockAuthServiceClient)
 
-	Register(router.Group("/api"), mockClient)
+		requestBody := RegisterRequestBody{
+			Email:    "test@example.com",
+			Password: "password",
+		}
 
-	requestBody := RegisterRequestBody{
-		Email:    "test@example.com",
-		Password: "password",
-		UserType: pb.UserType_CUSTOMER,
-	}
+		expectedRequest := &pb.RegisterRequest{
+			Email:    requestBody.Email,
+			Password: requestBody.Password,
+		}
 
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodPost, "/api/register", nil)
-	ctx, _ := gin.CreateTestContext(w)
-	ctx.Request = req
-	ctx.Set("json", requestBody)
+		expectedResponse := &pb.RegisterResponse{
+			Status: 200,
+		}
 
-	mockClient.EXPECT().Register(gomock.Any(), gomock.Any()).Return(&pb.RegisterResponse{
-		Status: 200,
-	}, nil)
+		mockClient.On("Register", mock.Anything, expectedRequest).Return(expectedResponse, nil)
 
-	router.HandleContext(ctx)
+		jsonBody := `{"email":"test@example.com","password":"password"}`
+		req, err := http.NewRequest("POST", "/register", strings.NewReader(jsonBody))
+		assert.NoError(t, err)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+		req.Header.Set("Content-Type", "application/json")
 
-	expectedResponse := `{"status":200}`
-	assert.Equal(t, expectedResponse, w.Body.String())
+		recorder := httptest.NewRecorder()
+
+		var authServiceClient AuthServiceClient = mockClient
+
+		router.POST("/register", func(ctx *gin.Context) {
+			Register(ctx, authServiceClient)
+		})
+
+		router.ServeHTTP(recorder, req)
+
+		mockClient.AssertExpectations(t)
+
+		assert.Equal(t, http.StatusOK, recorder.Code)
+
+		expectedResponseBody := `{"status":200}`
+		assert.Equal(t, expectedResponseBody, recorder.Body.String())
+	})
+
+	t.Run("Register Method to return status 400 BadRequest for invalid request body", func(t *testing.T) {
+		mockClient := new(mocks.MockAuthServiceClient)
+
+		jsonBody := `{}`
+
+		req, err := http.NewRequest("POST", "/register", strings.NewReader(jsonBody))
+		assert.NoError(t, err)
+
+		req.Header.Set("Content-Type", "application/json")
+
+		recorder := httptest.NewRecorder()
+
+		var authServiceClient AuthServiceClient = mockClient
+
+		router := gin.Default()
+
+		router.POST("/register", func(ctx *gin.Context) {
+			Register(ctx, authServiceClient)
+		})
+
+		router.ServeHTTP(recorder, req)
+
+		mockClient.AssertExpectations(t)
+
+		assert.Equal(t, http.StatusBadRequest, recorder.Code)
+	})
 }
