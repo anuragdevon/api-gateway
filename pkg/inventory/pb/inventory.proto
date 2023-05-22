@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "./pkg/inventory/pb";
+
+service ProductService {
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
+  rpc FindOne(FindOneRequest) returns (FindOneResponse) {}
+  rpc DecreaseStock(DeleteItemRequest) returns (DelelteItemResponse) {}
+}
+
+message CreateItemRequest {
+  string name = 1;
+  int64 quantity = 2;
+  int64 price = 3;
+}
+
+message CreateItemResponse {
+  int64 status = 1;
+  string error = 2;
+  int64 id = 3;
+}
+
+message FindOneData {
+  int64 id = 1;
+  string name = 2;
+  int64 quantity = 3;
+  int64 price = 4;
+}
+
+message FindOneRequest { 
+    int64 id = 1; 
+}
+
+message FindOneResponse {
+  int64 status = 1;
+  string error = 2;
+  FindOneData data = 3;
+}
+
+message DeleteItemRequest {
+  int64 id = 1;
+}
+
+message DelelteItemResponse {
+  int64 status = 1;
+  string error = 2;
+}
