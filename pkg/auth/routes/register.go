@@ -29,7 +29,6 @@ func Register(ctx *gin.Context, c pb.AuthServiceClient) {
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadGateway, err)
-		ctx.
 		return
 	}
 
