@@ -4,10 +4,12 @@ package inventory;
 
 option go_package = "./pkg/inventory/pb";
 
-service ProductService {
+service InventoryService {
   rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
-  rpc FindOne(FindOneRequest) returns (FindOneResponse) {}
-  rpc DecreaseStock(DeleteItemRequest) returns (DelelteItemResponse) {}
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
+  rpc GetAllItems(GetItemRequest) returns (GetItemResponse) {}
+  rpc UpdateItem(GetItemRequest) returns (GetItemResponse) {}
+  rpc DeleteItem(DeleteItemRequest) returns (DelelteItemResponse) {}
 }
 
 message CreateItemRequest {
@@ -22,21 +24,42 @@ message CreateItemResponse {
   int64 id = 3;
 }
 
-message FindOneData {
+message GetItemRequest { 
+  int64 id = 1; 
+}
+
+message GetItemData {
   int64 id = 1;
   string name = 2;
   int64 quantity = 3;
   int64 price = 4;
 }
 
-message FindOneRequest { 
-    int64 id = 1; 
-}
-
-message FindOneResponse {
+message GetItemResponse {
   int64 status = 1;
   string error = 2;
-  FindOneData data = 3;
+  GetItemData data = 3;
+}
+
+message GetAllItemsRequest {}
+
+message GetAllItemsResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated GetItemData data = 3;
+}
+
+message UpdateItemRequest {
+  int64 id = 1;
+  string name = 2;
+  int64 quantity = 3;
+  int64 price = 4;
+}
+
+message UpdateItemResponse {
+  int64 status = 1;
+  string error = 2;
+  GetItemData data = 3;
 }
 
 message DeleteItemRequest {
