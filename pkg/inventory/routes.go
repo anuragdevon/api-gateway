@@ -16,6 +16,7 @@ func RegisterRoutes(r *gin.Engine, c *config.Config) {
 	routes := r.Group("/inventory")
 	routes.POST("", svc.CreateItem)
 	routes.GET("/:id", svc.GetItem)
+	routes.GET("", svc.GetAllItems)
 }
 
 func (svc *ServiceClient) CreateItem(ctx *gin.Context) {
@@ -24,4 +25,8 @@ func (svc *ServiceClient) CreateItem(ctx *gin.Context) {
 
 func (svc *ServiceClient) GetItem(ctx *gin.Context) {
 	routes.GetItem(ctx, svc.Client)
+}
+
+func (svc *ServiceClient) GetAllItems(ctx *gin.Context) {
+	routes.GetAllItems(ctx, svc.Client)
 }

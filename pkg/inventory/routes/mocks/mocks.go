@@ -23,9 +23,9 @@ func (m *InventoryServiceClient) GetItem(ctx context.Context, in *pb.GetItemRequ
 	return args.Get(0).(*pb.GetItemResponse), args.Error(1)
 }
 
-func (m *InventoryServiceClient) GetAllItems(ctx context.Context, in *pb.GetItemRequest, opts ...grpc.CallOption) (*pb.GetItemResponse, error) {
+func (m *InventoryServiceClient) GetAllItems(ctx context.Context, in *pb.GetAllItemsRequest, opts ...grpc.CallOption) (*pb.GetAllItemsResponse, error) {
 	args := m.Called(ctx, in)
-	return args.Get(0).(*pb.GetItemResponse), args.Error(1)
+	return args.Get(0).(*pb.GetAllItemsResponse), args.Error(1)
 }
 
 func (m *InventoryServiceClient) UpdateItem(ctx context.Context, in *pb.GetItemRequest, opts ...grpc.CallOption) (*pb.GetItemResponse, error) {

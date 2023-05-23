@@ -7,7 +7,7 @@ option go_package = "./pkg/inventory/pb";
 service InventoryService {
   rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
   rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
-  rpc GetAllItems(GetItemRequest) returns (GetItemResponse) {}
+  rpc GetAllItems(GetAllItemsRequest) returns (GetAllItemsResponse) {}
   rpc UpdateItem(GetItemRequest) returns (GetItemResponse) {}
   rpc DeleteItem(DeleteItemRequest) returns (DelelteItemResponse) {}
 }
