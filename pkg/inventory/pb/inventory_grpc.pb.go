@@ -34,7 +34,7 @@ type InventoryServiceClient interface {
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
 	GetAllItems(ctx context.Context, in *GetAllItemsRequest, opts ...grpc.CallOption) (*GetAllItemsResponse, error)
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error)
-	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DelelteItemResponse, error)
+	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error)
 }
 
 type inventoryServiceClient struct {
@@ -81,8 +81,8 @@ func (c *inventoryServiceClient) UpdateItem(ctx context.Context, in *UpdateItemR
 	return out, nil
 }
 
-func (c *inventoryServiceClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DelelteItemResponse, error) {
-	out := new(DelelteItemResponse)
+func (c *inventoryServiceClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error) {
+	out := new(DeleteItemResponse)
 	err := c.cc.Invoke(ctx, InventoryService_DeleteItem_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ type InventoryServiceServer interface {
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
 	GetAllItems(context.Context, *GetAllItemsRequest) (*GetAllItemsResponse, error)
 	UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error)
-	DeleteItem(context.Context, *DeleteItemRequest) (*DelelteItemResponse, error)
+	DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
 
@@ -118,7 +118,7 @@ func (UnimplementedInventoryServiceServer) GetAllItems(context.Context, *GetAllI
 func (UnimplementedInventoryServiceServer) UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateItem not implemented")
 }
-func (UnimplementedInventoryServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DelelteItemResponse, error) {
+func (UnimplementedInventoryServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteItem not implemented")
 }
 func (UnimplementedInventoryServiceServer) mustEmbedUnimplementedInventoryServiceServer() {}

@@ -9,7 +9,7 @@ service InventoryService {
   rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
   rpc GetAllItems(GetAllItemsRequest) returns (GetAllItemsResponse) {}
   rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
-  rpc DeleteItem(DeleteItemRequest) returns (DelelteItemResponse) {}
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
 }
 
 message CreateItemRequest {
@@ -66,7 +66,7 @@ message DeleteItemRequest {
   int64 id = 1;
 }
 
-message DelelteItemResponse {
+message DeleteItemResponse {
   int64 status = 1;
   string error = 2;
 }

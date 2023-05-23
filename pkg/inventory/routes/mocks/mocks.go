@@ -33,7 +33,7 @@ func (m *InventoryServiceClient) UpdateItem(ctx context.Context, in *pb.UpdateIt
 	return args.Get(0).(*pb.UpdateItemResponse), args.Error(1)
 }
 
-func (m *InventoryServiceClient) DeleteItem(ctx context.Context, in *pb.DeleteItemRequest, opts ...grpc.CallOption) (*pb.DelelteItemResponse, error) {
+func (m *InventoryServiceClient) DeleteItem(ctx context.Context, in *pb.DeleteItemRequest, opts ...grpc.CallOption) (*pb.DeleteItemResponse, error) {
 	args := m.Called(ctx, in)
-	return args.Get(0).(*pb.DelelteItemResponse), args.Error(1)
+	return args.Get(0).(*pb.DeleteItemResponse), args.Error(1)
 }
