@@ -6,6 +6,7 @@ import (
 	"api-gateway/pkg/auth"
 	"api-gateway/pkg/config"
 	"api-gateway/pkg/inventory"
+	"api-gateway/pkg/order"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,5 +22,7 @@ func Run() {
 
 	auth.RegisterRoutes(r, &c)
 	inventory.RegisterRoutes(r, &c)
+	order.RegisterRoutes(r, &c)
+
 	r.Run(c.Port)
 }
