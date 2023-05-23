@@ -10,10 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DelelteItem(ctx *gin.Context, c pb.InventoryServiceClient) {
+func DeleteItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 32)
 
-	res, err := c.GetItem(context.Background(), &pb.GetItemRequest{
+	res, err := c.DeleteItem(context.Background(), &pb.DeleteItemRequest{
 		Id: int64(id),
 	})
 
