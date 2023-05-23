@@ -33,7 +33,7 @@ type InventoryServiceClient interface {
 	CreateItem(ctx context.Context, in *CreateItemRequest, opts ...grpc.CallOption) (*CreateItemResponse, error)
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
 	GetAllItems(ctx context.Context, in *GetAllItemsRequest, opts ...grpc.CallOption) (*GetAllItemsResponse, error)
-	UpdateItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
+	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error)
 	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DelelteItemResponse, error)
 }
 
@@ -72,8 +72,8 @@ func (c *inventoryServiceClient) GetAllItems(ctx context.Context, in *GetAllItem
 	return out, nil
 }
 
-func (c *inventoryServiceClient) UpdateItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error) {
-	out := new(GetItemResponse)
+func (c *inventoryServiceClient) UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error) {
+	out := new(UpdateItemResponse)
 	err := c.cc.Invoke(ctx, InventoryService_UpdateItem_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ type InventoryServiceServer interface {
 	CreateItem(context.Context, *CreateItemRequest) (*CreateItemResponse, error)
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
 	GetAllItems(context.Context, *GetAllItemsRequest) (*GetAllItemsResponse, error)
-	UpdateItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
+	UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error)
 	DeleteItem(context.Context, *DeleteItemRequest) (*DelelteItemResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
@@ -115,7 +115,7 @@ func (UnimplementedInventoryServiceServer) GetItem(context.Context, *GetItemRequ
 func (UnimplementedInventoryServiceServer) GetAllItems(context.Context, *GetAllItemsRequest) (*GetAllItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllItems not implemented")
 }
-func (UnimplementedInventoryServiceServer) UpdateItem(context.Context, *GetItemRequest) (*GetItemResponse, error) {
+func (UnimplementedInventoryServiceServer) UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateItem not implemented")
 }
 func (UnimplementedInventoryServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DelelteItemResponse, error) {
@@ -189,7 +189,7 @@ func _InventoryService_GetAllItems_Handler(srv interface{}, ctx context.Context,
 }
 
 func _InventoryService_UpdateItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetItemRequest)
+	in := new(UpdateItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func _InventoryService_UpdateItem_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: InventoryService_UpdateItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).UpdateItem(ctx, req.(*GetItemRequest))
+		return srv.(InventoryServiceServer).UpdateItem(ctx, req.(*UpdateItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

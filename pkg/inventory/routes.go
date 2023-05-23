@@ -17,6 +17,7 @@ func RegisterRoutes(r *gin.Engine, c *config.Config) {
 	routes.POST("", svc.CreateItem)
 	routes.GET("/:id", svc.GetItem)
 	routes.GET("", svc.GetAllItems)
+	routes.PUT("/:id", svc.UpdateItem)
 }
 
 func (svc *ServiceClient) CreateItem(ctx *gin.Context) {
@@ -29,4 +30,8 @@ func (svc *ServiceClient) GetItem(ctx *gin.Context) {
 
 func (svc *ServiceClient) GetAllItems(ctx *gin.Context) {
 	routes.GetAllItems(ctx, svc.Client)
+}
+
+func (svc *ServiceClient) UpdateItem(ctx *gin.Context) {
+	routes.UpdateItem(ctx, svc.Client)
 }
