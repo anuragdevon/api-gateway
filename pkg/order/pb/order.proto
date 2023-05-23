@@ -9,7 +9,7 @@ service OrderService {
 }
 
 message CreateOrderRequest {
-  int64 productId = 1;
+  int64 itemId = 1;
   int64 quantity = 2;
   int64 userId = 3;
 }

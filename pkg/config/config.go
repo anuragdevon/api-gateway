@@ -5,7 +5,7 @@ import "github.com/spf13/viper"
 type Config struct {
 	Port            string `mapstructure:"PORT"`
 	AuthSvcUrl      string `mapstructure:"AUTH_SVC_URL"`
-	InventorySvcUrl string `mapstructure:"PRODUCT_SVC_URL"`
+	InventorySvcUrl string `mapstructure:"INVENTORY_SVC_URL"`
 	OrderSvcUrl     string `mapstructure:"ORDER_SVC_URL"`
 }
 
