@@ -17,8 +17,11 @@ import (
 )
 
 func TestLogin(t *testing.T) {
-	router := gin.Default()
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+
 	mockClient := new(mocks.MockAuthServiceClient)
+
 	var authServiceClient AuthServiceClient = mockClient
 	router.POST("/login", func(ctx *gin.Context) {
 		Login(ctx, authServiceClient)

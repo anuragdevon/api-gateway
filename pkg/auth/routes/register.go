@@ -5,17 +5,13 @@ import (
 	"net/http"
 
 	"api-gateway/pkg/auth/pb"
+	"api-gateway/pkg/auth/routes/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-type RegisterRequestBody struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func Register(ctx *gin.Context, c pb.AuthServiceClient) {
-	body := RegisterRequestBody{}
+	body := dto.RegisterRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
@@ -25,6 +21,7 @@ func Register(ctx *gin.Context, c pb.AuthServiceClient) {
 	res, err := c.Register(context.Background(), &pb.RegisterRequest{
 		Email:    body.Email,
 		Password: body.Password,
+		UserType: dto.UserTypeMap[body.UserType],
 	})
 
 	if err != nil {
