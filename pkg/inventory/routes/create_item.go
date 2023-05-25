@@ -5,18 +5,13 @@ import (
 	"net/http"
 
 	"api-gateway/pkg/inventory/pb"
+	"api-gateway/pkg/inventory/routes/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-type CreateItemRequestBody struct {
-	Name     string `json:"name"`
-	Quantity int64  `json:"quantity"`
-	Price    int64  `json:"price"`
-}
-
 func CreateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	body := CreateItemRequestBody{}
+	body := dto.CreateItemRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)

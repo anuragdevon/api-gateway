@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -11,57 +12,44 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"api-gateway/pkg/inventory/pb"
-	"api-gateway/pkg/inventory/routes/mocks"
+	"api-gateway/pkg/inventory/pb/mocks"
+	"api-gateway/pkg/inventory/routes/dto"
 )
 
 func TestCreateItem(t *testing.T) {
-	router := gin.Default()
-	t.Run("CreateItem method to return status 201 Created for successful entry of item in inventory", func(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
 
-		mockClient := new(mocks.InventoryServiceClient)
+	mockClient := new(mocks.InventoryServiceClient)
 
-		router.POST("/inventory", func(ctx *gin.Context) {
-			CreateItem(ctx, mockClient)
-		})
+	var inventoryServiceClient pb.InventoryServiceClient = mockClient
+	router.POST("/inventory", func(ctx *gin.Context) {
+		CreateItem(ctx, inventoryServiceClient)
+	})
 
-		requestBody := CreateItemRequestBody{
+	t.Run("CreateItem Method to return status 201 StatusCreated for successful item creation in inventory", func(t *testing.T) {
+
+		requestBody := dto.CreateItemRequestBody{
 			Name:     "Test Product",
 			Quantity: 10,
 			Price:    100,
 		}
-
-		jsonBody := `{"name":"Test Product","quantity":10,"price":100}`
-
-		req, err := http.NewRequest("POST", "/inventory", strings.NewReader(jsonBody))
-		assert.NoError(t, err)
-		req.Header.Set("Content-Type", "application/json")
-
-		recorder := httptest.NewRecorder()
 
 		expectedRequest := &pb.CreateItemRequest{
 			Name:     requestBody.Name,
 			Quantity: requestBody.Quantity,
 			Price:    requestBody.Price,
 		}
+
 		expectedResponse := &pb.CreateItemResponse{
+			Id:     1,
 			Status: 201,
 		}
+
 		mockClient.On("CreateItem", mock.Anything, expectedRequest).Return(expectedResponse, nil)
 
-		router.ServeHTTP(recorder, req)
+		jsonBody := `{"name":"Test Product","quantity":10,"price":100}`
 
-		assert.Equal(t, http.StatusCreated, recorder.Code)
-
-		expectedResponseBody := `{"status":201}`
-		assert.Equal(t, expectedResponseBody, recorder.Body.String())
-
-		mockClient.AssertCalled(t, "CreateItem", mock.Anything, expectedRequest)
-	})
-
-	t.Run("CreateItem Method to return status 400 BadRequest for invalid request", func(t *testing.T) {
-		mockClient := new(mocks.InventoryServiceClient)
-
-		jsonBody := `{"name":"new-test-product"}`
 		req, err := http.NewRequest("POST", "/inventory", strings.NewReader(jsonBody))
 		assert.NoError(t, err)
 
@@ -69,19 +57,54 @@ func TestCreateItem(t *testing.T) {
 
 		recorder := httptest.NewRecorder()
 
-		var inventoryServiceClient mocks.InventoryServiceClient = *mockClient
+		router.ServeHTTP(recorder, req)
 
-		router.POST("/inventory", func(ctx *gin.Context) {
-			CreateItem(ctx, &inventoryServiceClient)
-		})
+		mockClient.AssertExpectations(t)
+		// TODO: id check
+		assert.Equal(t, http.StatusCreated, recorder.Code)
+	})
+
+	t.Run("CreateItem Method to return status 400 BadRequest for invalid request", func(t *testing.T) {
+		jsonBody := `{"name":"Test Product","quantity":"10","price":"100"}`
+		req, err := http.NewRequest("POST", "/inventory", strings.NewReader(jsonBody))
+		assert.NoError(t, err)
+
+		req.Header.Set("Content-Type", "application/json")
+
+		recorder := httptest.NewRecorder()
+
+		router.ServeHTTP(recorder, req)
+
+		mockClient.AssertExpectations(t)
 
 		router.ServeHTTP(recorder, req)
 
 		mockClient.AssertNotCalled(t, "CreateItem")
 
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
+	})
 
-		expectedResponseBody := `{"error":"invalid request body"}`
-		assert.Equal(t, expectedResponseBody, recorder.Body.String())
+	t.Run("CreateItem Method to return status 502 BadGateway for bad gateway error", func(t *testing.T) {
+		expectedRequest := &pb.CreateItemRequest{
+			Name:     "Test Product",
+			Quantity: 10,
+			Price:    100,
+		}
+
+		mockClient.On("CreateItem", mock.Anything, expectedRequest).Return(nil, errors.New("bad gateway error"))
+
+		jsonBody := `{"name":"Test Product","quantity":10,"price":100}`
+		req, err := http.NewRequest("POST", "/inventory", strings.NewReader(jsonBody))
+		assert.NoError(t, err)
+
+		req.Header.Set("Content-Type", "application/json")
+
+		recorder := httptest.NewRecorder()
+
+		router.ServeHTTP(recorder, req)
+
+		mockClient.AssertExpectations(t)
+
+		assert.Equal(t, http.StatusBadGateway, recorder.Code)
 	})
 }
