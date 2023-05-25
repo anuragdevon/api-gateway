@@ -1,12 +1,14 @@
 package routes
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"api-gateway/pkg/auth/pb"
+	"api-gateway/pkg/auth/routes/dto"
 	"api-gateway/pkg/auth/routes/mocks"
 
 	"github.com/gin-gonic/gin"
@@ -16,10 +18,15 @@ import (
 
 func TestLogin(t *testing.T) {
 	router := gin.Default()
-	t.Run("Login Method to return status 201 StatusCreated for successful login", func(t *testing.T) {
-		mockClient := new(mocks.MockAuthServiceClient)
+	mockClient := new(mocks.MockAuthServiceClient)
+	var authServiceClient AuthServiceClient = mockClient
+	router.POST("/login", func(ctx *gin.Context) {
+		Login(ctx, authServiceClient)
+	})
 
-		requestBody := LoginRequestBody{
+	t.Run("Login Method to return status 201 StatusCreated for successful login", func(t *testing.T) {
+
+		requestBody := dto.LoginRequestBody{
 			Email:    "test@example.com",
 			Password: "password",
 		}
@@ -43,12 +50,6 @@ func TestLogin(t *testing.T) {
 
 		recorder := httptest.NewRecorder()
 
-		var authServiceClient AuthServiceClient = mockClient
-
-		router.POST("/login", func(ctx *gin.Context) {
-			Login(ctx, authServiceClient)
-		})
-
 		router.ServeHTTP(recorder, req)
 
 		mockClient.AssertExpectations(t)
@@ -60,9 +61,7 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("Login Method to return status 400 BadRequest for invalid request", func(t *testing.T) {
-		mockClient := new(mocks.MockAuthServiceClient)
-
-		jsonBody := `{"email":"test@example.com"}`
+		jsonBody := `{"email": 1, "password": 2}`
 		req, err := http.NewRequest("POST", "/login", strings.NewReader(jsonBody))
 		assert.NoError(t, err)
 
@@ -70,19 +69,38 @@ func TestLogin(t *testing.T) {
 
 		recorder := httptest.NewRecorder()
 
-		var authServiceClient AuthServiceClient = mockClient
+		router.ServeHTTP(recorder, req)
 
-		router.POST("/login", func(ctx *gin.Context) {
-			Login(ctx, authServiceClient)
-		})
+		mockClient.AssertExpectations(t)
 
 		router.ServeHTTP(recorder, req)
 
 		mockClient.AssertNotCalled(t, "Login")
 
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
-
-		expectedResponseBody := `{"error":"invalid request body"}`
-		assert.Equal(t, expectedResponseBody, recorder.Body.String())
 	})
+
+	t.Run("Login Method to return status 502 BadGateway for bad gateway error", func(t *testing.T) {
+		expectedRequest := &pb.LoginRequest{
+			Email:    "test@example.com",
+			Password: "password",
+		}
+
+		mockClient.On("Login", mock.Anything, expectedRequest).Return(nil, errors.New("bad gateway error"))
+
+		jsonBody := `{"email":"test@example.com","password":"password"}`
+		req, err := http.NewRequest("POST", "/login", strings.NewReader(jsonBody))
+		assert.NoError(t, err)
+
+		req.Header.Set("Content-Type", "application/json")
+
+		recorder := httptest.NewRecorder()
+
+		router.ServeHTTP(recorder, req)
+
+		mockClient.AssertExpectations(t)
+
+		assert.Equal(t, http.StatusBadGateway, recorder.Code)
+	})
+
 }

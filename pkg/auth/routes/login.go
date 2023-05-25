@@ -5,17 +5,13 @@ import (
 	"net/http"
 
 	"api-gateway/pkg/auth/pb"
+	"api-gateway/pkg/auth/routes/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-type LoginRequestBody struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func Login(ctx *gin.Context, c pb.AuthServiceClient) {
-	b := LoginRequestBody{}
+	b := dto.LoginRequestBody{}
 
 	if err := ctx.BindJSON(&b); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
