@@ -1,82 +1,79 @@
 package routes
 
-// import (
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"testing"
+import (
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/stretchr/testify/assert"
-// 	"github.com/stretchr/testify/mock"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
-// 	"api-gateway/pkg/inventory/pb"
-// 	"api-gateway/pkg/inventory/routes/mocks"
-// )
+	"api-gateway/pkg/inventory/pb"
+	"api-gateway/pkg/inventory/pb/mocks"
+)
 
-// func TestGetItem(t *testing.T) {
-// 	router := gin.Default()
-// 	t.Run("GetItem method to return status 200 OK and item details for a valid item ID", func(t *testing.T) {
-// 		mockClient := new(mocks.InventoryServiceClient)
+func TestGetItem(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
 
-// 		router.GET("/inventory/:id", func(ctx *gin.Context) {
-// 			GetItem(ctx, mockClient)
-// 		})
+	mockClient := new(mocks.InventoryServiceClient)
 
-// 		itemID := "123"
-// 		req, err := http.NewRequest("GET", "/inventory/"+itemID, nil)
-// 		assert.NoError(t, err)
+	var inventoryServiceClient pb.InventoryServiceClient = mockClient
+	router.GET("/inventory/:id", func(ctx *gin.Context) {
+		GetItem(ctx, inventoryServiceClient)
+	})
 
-// 		recorder := httptest.NewRecorder()
+	t.Run("GetItem method to return status 200 OK and item details for a valid item ID", func(t *testing.T) {
+		itemID := "123"
+		req, err := http.NewRequest("GET", "/inventory/"+itemID, nil)
+		assert.NoError(t, err)
 
-// 		expectedRequest := &pb.GetItemRequest{
-// 			Id: 123,
-// 		}
-// 		expectedResponse := &pb.GetItemResponse{
-// 			Status: 200,
-// 			Data: &pb.GetItemData{
-// 				Id:       123,
-// 				Name:     "Test Product",
-// 				Quantity: 10,
-// 				Price:    100,
-// 			},
-// 		}
-// 		mockClient.On("GetItem", mock.Anything, expectedRequest).Return(expectedResponse, nil)
+		recorder := httptest.NewRecorder()
 
-// 		router.ServeHTTP(recorder, req)
+		expectedRequest := &pb.GetItemRequest{
+			Id: 123,
+		}
+		expectedResponse := &pb.GetItemResponse{
+			Status: 200,
+			Data: &pb.GetItemData{
+				Id:       123,
+				Name:     "Test Product",
+				Quantity: 10,
+				Price:    100,
+			},
+		}
+		mockClient.On("GetItem", mock.Anything, expectedRequest).Return(expectedResponse, nil)
 
-// 		assert.Equal(t, http.StatusOK, recorder.Code)
+		router.ServeHTTP(recorder, req)
 
-// 		expectedResponseBody := `{"status":200,"data":{"id":123,"name":"Test Product","quantity":10,"price":100}}`
-// 		assert.Equal(t, expectedResponseBody, recorder.Body.String())
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-// 		mockClient.AssertCalled(t, "GetItem", mock.Anything, expectedRequest)
-// 	})
+		expectedResponseBody := `{"status":200,"data":{"id":123,"name":"Test Product","quantity":10,"price":100}}`
+		assert.Equal(t, expectedResponseBody, recorder.Body.String())
 
-// 	t.Run("GetItem method to return status 500 InternalServerError for an error from the inventory service", func(t *testing.T) {
-// 		mockClient := new(mocks.InventoryServiceClient)
+		mockClient.AssertCalled(t, "GetItem", mock.Anything, expectedRequest)
+	})
 
-// 		itemID := "456"
-// 		req, err := http.NewRequest("GET", "/inventory/"+itemID, nil)
-// 		assert.NoError(t, err)
+	t.Run("GetItem method to return status 502 BadGateway for an error from the inventory service", func(t *testing.T) {
 
-// 		recorder := httptest.NewRecorder()
+		itemID := "456"
+		req, err := http.NewRequest("GET", "/inventory/"+itemID, nil)
+		assert.NoError(t, err)
 
-// 		var inventoryServiceClient mocks.InventoryServiceClient = *mockClient
+		recorder := httptest.NewRecorder()
 
-// 		router.GET("/inventory/:id", func(ctx *gin.Context) {
-// 			GetItem(ctx, &inventoryServiceClient)
-// 		})
+		expectedRequest := &pb.GetItemRequest{
+			Id: 456,
+		}
+		mockClient.On("GetItem", mock.Anything, expectedRequest).Return(nil, errors.New("bad gateway error"))
 
-// 		expectedRequest := &pb.GetItemRequest{
-// 			Id: 456,
-// 		}
-// 		mockClient.On("GetItem", mock.Anything, expectedRequest).Return(nil, "someError")
+		router.ServeHTTP(recorder, req)
 
-// 		router.ServeHTTP(recorder, req)
+		mockClient.AssertCalled(t, "GetItem", mock.Anything, expectedRequest)
 
-// 		mockClient.AssertCalled(t, "GetItem", mock.Anything, expectedRequest)
+		assert.Equal(t, http.StatusBadGateway, recorder.Code)
 
-// 		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
-
-// 	})
-// }
+	})
+}
