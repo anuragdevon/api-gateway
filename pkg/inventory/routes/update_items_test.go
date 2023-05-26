@@ -13,6 +13,7 @@ import (
 
 	"api-gateway/pkg/inventory/pb"
 	"api-gateway/pkg/inventory/pb/mocks"
+	"api-gateway/pkg/inventory/routes/dto"
 )
 
 func TestUpdateItem(t *testing.T) {
@@ -28,7 +29,7 @@ func TestUpdateItem(t *testing.T) {
 
 	t.Run("UpdateItem method to return status 200 OK for successful update of an item in the inventory", func(t *testing.T) {
 		itemID := "123"
-		requestBody := UpdateItemRequestBody{
+		requestBody := dto.UpdateItemRequestBody{
 			Id:       123,
 			Name:     "Updated Product",
 			Quantity: 20,
@@ -88,7 +89,7 @@ func TestUpdateItem(t *testing.T) {
 	t.Run("UpdateItem method to return status 502 BadGateway for an error from the inventory service", func(t *testing.T) {
 
 		itemID := "789"
-		requestBody := UpdateItemRequestBody{
+		requestBody := dto.UpdateItemRequestBody{
 			Id:       789,
 			Name:     "Updated Product",
 			Quantity: 20,

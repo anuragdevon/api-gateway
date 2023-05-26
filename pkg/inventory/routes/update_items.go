@@ -5,19 +5,13 @@ import (
 	"net/http"
 
 	"api-gateway/pkg/inventory/pb"
+	"api-gateway/pkg/inventory/routes/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UpdateItemRequestBody struct {
-	Id       int64  `json:"product_id"`
-	Name     string `json:"name"`
-	Quantity int64  `json:"quantity"`
-	Price    int64  `json:"price"`
-}
-
 func UpdateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	body := UpdateItemRequestBody{}
+	body := dto.UpdateItemRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
