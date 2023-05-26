@@ -5,18 +5,13 @@ import (
 	"net/http"
 
 	"api-gateway/pkg/order/pb"
+	"api-gateway/pkg/order/routes/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-type CreateOrderRequestBody struct {
-	ItemId   int64 `json:"itemId"`
-	Quantity int64 `json:"quantity"`
-	UserId   int64 `json:"user_id"`
-}
-
 func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
-	body := CreateOrderRequestBody{}
+	body := dto.CreateOrderRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
@@ -24,7 +19,6 @@ func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
 	}
 
 	res, err := c.CreateOrder(context.Background(), &pb.CreateOrderRequest{
-
 		UserId:   body.UserId,
 		ItemId:   body.ItemId,
 		Quantity: body.Quantity,

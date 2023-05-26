@@ -77,8 +77,6 @@ func TestCreateItem(t *testing.T) {
 
 		mockClient.AssertExpectations(t)
 
-		router.ServeHTTP(recorder, req)
-
 		mockClient.AssertNotCalled(t, "CreateItem")
 
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
