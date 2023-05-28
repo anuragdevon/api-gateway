@@ -1,19 +1,24 @@
 package inventory
 
 import (
+	"api-gateway/pkg/auth"
 	"api-gateway/pkg/config"
 	"api-gateway/pkg/inventory/routes"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine, c *config.Config) {
+func RegisterRoutes(r *gin.Engine, c *config.Config, authSvc *auth.ServiceClient) {
+
+	a := auth.InitAuthMiddleware(authSvc)
 
 	svc := &ServiceClient{
 		Client: InitServiceClient(c),
 	}
 
 	routes := r.Group("/inventory")
+	routes.Use(a.AuthRequired)
+
 	routes.POST("", svc.CreateItem)
 	routes.GET("/:id", svc.GetItem)
 	routes.GET("", svc.GetAllItems)

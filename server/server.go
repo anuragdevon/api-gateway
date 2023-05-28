@@ -20,9 +20,9 @@ func Run() {
 
 	r := gin.Default()
 
-	auth.RegisterRoutes(r, &c)
-	inventory.RegisterRoutes(r, &c)
-	order.RegisterRoutes(r, &c)
+	authSvc := auth.RegisterRoutes(r, &c)
+	inventory.RegisterRoutes(r, &c, authSvc)
+	order.RegisterRoutes(r, &c, authSvc)
 
 	r.Run(c.Port)
 }
