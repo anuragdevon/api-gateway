@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	InventoryService_CreateItem_FullMethodName           = "/inventory.InventoryService/CreateItem"
-	InventoryService_GetItem_FullMethodName              = "/inventory.InventoryService/GetItem"
-	InventoryService_GetAllItems_FullMethodName          = "/inventory.InventoryService/GetAllItems"
-	InventoryService_UpdateItem_FullMethodName           = "/inventory.InventoryService/UpdateItem"
-	InventoryService_DeleteItem_FullMethodName           = "/inventory.InventoryService/DeleteItem"
-	InventoryService_DecreaseItemQuantity_FullMethodName = "/inventory.InventoryService/DecreaseItemQuantity"
+	InventoryService_CreateItem_FullMethodName           = "/inventory.InventoryService/createItem"
+	InventoryService_GetItem_FullMethodName              = "/inventory.InventoryService/getItem"
+	InventoryService_GetAllItems_FullMethodName          = "/inventory.InventoryService/getAllItems"
+	InventoryService_UpdateItem_FullMethodName           = "/inventory.InventoryService/updateItem"
+	InventoryService_DeleteItem_FullMethodName           = "/inventory.InventoryService/deleteItem"
+	InventoryService_DecreaseItemQuantity_FullMethodName = "/inventory.InventoryService/decreaseItemQuantity"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
@@ -265,27 +265,27 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*InventoryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateItem",
+			MethodName: "createItem",
 			Handler:    _InventoryService_CreateItem_Handler,
 		},
 		{
-			MethodName: "GetItem",
+			MethodName: "getItem",
 			Handler:    _InventoryService_GetItem_Handler,
 		},
 		{
-			MethodName: "GetAllItems",
+			MethodName: "getAllItems",
 			Handler:    _InventoryService_GetAllItems_Handler,
 		},
 		{
-			MethodName: "UpdateItem",
+			MethodName: "updateItem",
 			Handler:    _InventoryService_UpdateItem_Handler,
 		},
 		{
-			MethodName: "DeleteItem",
+			MethodName: "deleteItem",
 			Handler:    _InventoryService_DeleteItem_Handler,
 		},
 		{
-			MethodName: "DecreaseItemQuantity",
+			MethodName: "decreaseItemQuantity",
 			Handler:    _InventoryService_DecreaseItemQuantity_Handler,
 		},
 	},
