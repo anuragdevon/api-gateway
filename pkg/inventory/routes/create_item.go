@@ -3,18 +3,19 @@ package routes
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"api-gateway/pkg/inventory/pb"
 	"api-gateway/pkg/inventory/routes/dto"
 
+	authpb "api-gateway/pkg/auth/pb"
+
 	"github.com/gin-gonic/gin"
 )
 
 func CreateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	fmt.Println(ctx.GetString("UserType"))
-	if ctx.GetString("UserType") != "ADMIN" {
+	userType, _ := ctx.Get("UserType")
+	if userType != authpb.UserType_ADMIN {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}

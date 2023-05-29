@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	authpb "api-gateway/pkg/auth/pb"
 	"api-gateway/pkg/inventory/pb"
 	"api-gateway/pkg/inventory/routes/dto"
 
@@ -12,7 +13,8 @@ import (
 )
 
 func UpdateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	if ctx.GetString("UserType") != "ADMIN" {
+	userType, _ := ctx.Get("UserType")
+	if userType != authpb.UserType_ADMIN {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}

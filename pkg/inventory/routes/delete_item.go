@@ -6,13 +6,15 @@ import (
 	"net/http"
 	"strconv"
 
+	authpb "api-gateway/pkg/auth/pb"
 	"api-gateway/pkg/inventory/pb"
 
 	"github.com/gin-gonic/gin"
 )
 
 func DeleteItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	if ctx.GetString("UserType") != "ADMIN" {
+	userType, _ := ctx.Get("UserType")
+	if userType != authpb.UserType_ADMIN {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}
