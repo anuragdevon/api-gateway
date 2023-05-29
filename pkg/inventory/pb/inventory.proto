@@ -18,6 +18,7 @@ message CreateItemRequest {
   string name = 1;
   int64 quantity = 2;
   int64 price = 3;
+  int64 userId = 4;
 }
 
 message CreateItemResponse {
