@@ -29,7 +29,6 @@ func TestCreateOrder(t *testing.T) {
 
 	t.Run("CreateOrder method should return status 201 Created for a successful order creation", func(t *testing.T) {
 		requestBody := dto.CreateOrderRequestBody{
-			UserId:   12,
 			ItemId:   123,
 			Quantity: 10,
 		}
@@ -43,7 +42,6 @@ func TestCreateOrder(t *testing.T) {
 		recorder := httptest.NewRecorder()
 
 		expectedRequest := &pb.CreateOrderRequest{
-			UserId:   requestBody.UserId,
 			ItemId:   requestBody.ItemId,
 			Quantity: requestBody.Quantity,
 		}

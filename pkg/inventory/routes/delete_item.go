@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -11,6 +12,10 @@ import (
 )
 
 func DeleteItem(ctx *gin.Context, c pb.InventoryServiceClient) {
+	if ctx.GetString("UseType") != "ADMIN" {
+		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
+		return
+	}
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 32)
 
 	res, err := c.DeleteItem(context.Background(), &pb.DeleteItemRequest{

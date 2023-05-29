@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"api-gateway/pkg/order/pb"
@@ -11,6 +12,11 @@ import (
 )
 
 func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
+	userId := ctx.GetInt64("UserId")
+	if ctx.GetString("UseType") != "CUSTOMER" {
+		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
+		return
+	}
 	body := dto.CreateOrderRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
@@ -19,7 +25,7 @@ func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
 	}
 
 	res, err := c.CreateOrder(context.Background(), &pb.CreateOrderRequest{
-		UserId:   body.UserId,
+		UserId:   userId,
 		ItemId:   body.ItemId,
 		Quantity: body.Quantity,
 	})
@@ -29,5 +35,5 @@ func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, &res)
+	ctx.JSON(int(res.Status), &res)
 }

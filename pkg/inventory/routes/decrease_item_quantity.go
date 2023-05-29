@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"api-gateway/pkg/inventory/pb"
@@ -11,6 +12,10 @@ import (
 )
 
 func DecreaseItemQuantity(ctx *gin.Context, c pb.InventoryServiceClient) {
+	if ctx.GetString("UseType") != "ADMIN" {
+		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
+		return
+	}
 	body := dto.DecreaseItemQuantityRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
