@@ -8,11 +8,14 @@ import (
 	"api-gateway/pkg/order/pb"
 	"api-gateway/pkg/order/routes/dto"
 
+	authpb "api-gateway/pkg/auth/pb"
+
 	"github.com/gin-gonic/gin"
 )
 
 func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
-	if ctx.GetString("UserType") != "CUSTOMER" {
+	userType, _ := ctx.Get("UserType")
+	if userType != authpb.UserType_CUSTOMER {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}
