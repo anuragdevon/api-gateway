@@ -12,11 +12,12 @@ import (
 )
 
 func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
-	userId := ctx.GetInt64("UserId")
 	if ctx.GetString("UseType") != "CUSTOMER" {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}
+
+	userId := ctx.GetInt64("UserId")
 	body := dto.CreateOrderRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {

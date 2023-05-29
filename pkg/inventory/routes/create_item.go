@@ -16,6 +16,8 @@ func CreateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}
+
+	userId := ctx.GetInt64("UserId")
 	body := dto.CreateItemRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
@@ -27,6 +29,7 @@ func CreateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 		Name:     body.Name,
 		Quantity: body.Quantity,
 		Price:    body.Price,
+		UserId:   userId,
 	})
 
 	if err != nil {
