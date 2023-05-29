@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"api-gateway/pkg/inventory/pb"
@@ -12,7 +13,8 @@ import (
 )
 
 func CreateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	if ctx.GetString("UseType") != "ADMIN" {
+	fmt.Println(ctx.GetString("UserType"))
+	if ctx.GetString("UserType") != "ADMIN" {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}

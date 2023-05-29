@@ -12,7 +12,7 @@ import (
 )
 
 func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
-	if ctx.GetString("UseType") != "CUSTOMER" {
+	if ctx.GetString("UserType") != "CUSTOMER" {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}

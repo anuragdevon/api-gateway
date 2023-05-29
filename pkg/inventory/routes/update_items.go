@@ -12,7 +12,7 @@ import (
 )
 
 func UpdateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
-	if ctx.GetString("UseType") != "ADMIN" {
+	if ctx.GetString("UserType") != "ADMIN" {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}
