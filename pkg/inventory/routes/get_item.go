@@ -22,5 +22,5 @@ func GetItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &res)
+	ctx.JSON(int(res.Status), &res)
 }

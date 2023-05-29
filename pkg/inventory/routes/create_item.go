@@ -29,5 +29,5 @@ func CreateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, &res)
+	ctx.JSON(int(res.Status), &res)
 }
