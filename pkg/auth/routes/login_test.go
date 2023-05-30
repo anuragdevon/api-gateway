@@ -18,16 +18,16 @@ import (
 
 func TestLogin(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	router := gin.New()
 
-	mockClient := new(mocks.MockAuthServiceClient)
+	t.Run("Login Method to return status 200 StatusOk for successful login", func(t *testing.T) {
+		router := gin.New()
 
-	var authServiceClient AuthServiceClient = mockClient
-	router.POST("/login", func(ctx *gin.Context) {
-		Login(ctx, authServiceClient)
-	})
+		mockClient := new(mocks.MockAuthServiceClient)
 
-	t.Run("Login Method to return status 201 StatusCreated for successful login", func(t *testing.T) {
+		var authServiceClient AuthServiceClient = mockClient
+		router.POST("/login", func(ctx *gin.Context) {
+			Login(ctx, authServiceClient)
+		})
 
 		requestBody := dto.LoginRequestBody{
 			Email:    "test@example.com",
@@ -57,13 +57,22 @@ func TestLogin(t *testing.T) {
 
 		mockClient.AssertExpectations(t)
 
-		assert.Equal(t, http.StatusCreated, recorder.Code)
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
 		expectedResponseBody := `{"token":"some_expected_valid_token"}`
 		assert.Equal(t, expectedResponseBody, recorder.Body.String())
 	})
 
 	t.Run("Login Method to return status 400 BadRequest for invalid request", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.MockAuthServiceClient)
+
+		var authServiceClient AuthServiceClient = mockClient
+		router.POST("/login", func(ctx *gin.Context) {
+			Login(ctx, authServiceClient)
+		})
+
 		jsonBody := `{"email": 1, "password": 2}`
 		req, err := http.NewRequest("POST", "/login", strings.NewReader(jsonBody))
 		assert.NoError(t, err)
@@ -84,6 +93,15 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("Login Method to return status 502 BadGateway for bad gateway error", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.MockAuthServiceClient)
+
+		var authServiceClient AuthServiceClient = mockClient
+		router.POST("/login", func(ctx *gin.Context) {
+			Login(ctx, authServiceClient)
+		})
+
 		expectedRequest := &pb.LoginRequest{
 			Email:    "test@example.com",
 			Password: "password",
