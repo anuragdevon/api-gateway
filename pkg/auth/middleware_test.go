@@ -21,12 +21,33 @@ func performRequest(router *gin.Engine, req *http.Request) *httptest.ResponseRec
 
 func TestAuthRequired(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	router := gin.Default()
-	mockClient := new(mocks.MockAuthServiceClient)
-	authMiddleware := InitAuthMiddleware(&ServiceClient{Client: mockClient})
-	router.Use(authMiddleware.AuthRequired)
+	t.Run("AuthRequired should set userId in context and call next handler if validation succeeds", func(t *testing.T) {
+		router := gin.Default()
+		mockClient := new(mocks.MockAuthServiceClient)
+		authMiddleware := InitAuthMiddleware(&ServiceClient{Client: mockClient})
+		router.Use(authMiddleware.AuthRequired)
+
+		req, _ := http.NewRequest("GET", "/", nil)
+		req.Header.Set("Authorization", "Bearer some_token")
+
+		mockClient.On("Validate", mock.Anything, &pb.ValidateRequest{Token: "some_token"}).
+			Return(&pb.ValidateResponse{Status: http.StatusOK, UserId: 1, UserType: pb.UserType_CUSTOMER}, nil)
+
+		router.GET("/", func(ctx *gin.Context) {
+			userId, exists := ctx.Get("UserId")
+			assert.True(t, exists)
+			assert.Equal(t, int64(1), userId)
+			ctx.Status(http.StatusOK)
+		})
+
+		w := performRequest(router, req)
+
+		mockClient.AssertExpectations(t)
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
 
 	t.Run("AuthRequired should return status 401 Unauthorized if authorization header is missing", func(t *testing.T) {
+		router := gin.Default()
 		mockClient := new(mocks.MockAuthServiceClient)
 		authMiddleware := InitAuthMiddleware(&ServiceClient{Client: mockClient})
 		router.Use(authMiddleware.AuthRequired)
@@ -38,14 +59,24 @@ func TestAuthRequired(t *testing.T) {
 	})
 
 	t.Run("AuthRequired should return status 401 Unauthorized if token is missing in authorization header", func(t *testing.T) {
+		router := gin.Default()
+		mockClient := new(mocks.MockAuthServiceClient)
+		authMiddleware := InitAuthMiddleware(&ServiceClient{Client: mockClient})
+		router.Use(authMiddleware.AuthRequired)
+
 		req, _ := http.NewRequest("GET", "/", nil)
-		req.Header.Set("Authorization", "Bearer ")
+		req.Header.Set("Authorization", "Bearer")
 		w := performRequest(router, req)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 
 	t.Run("AuthRequired should return status 401 Unauthorized if validation fails", func(t *testing.T) {
+		router := gin.Default()
+		mockClient := new(mocks.MockAuthServiceClient)
+		authMiddleware := InitAuthMiddleware(&ServiceClient{Client: mockClient})
+		router.Use(authMiddleware.AuthRequired)
+
 		req, _ := http.NewRequest("GET", "/", nil)
 		req.Header.Set("Authorization", "Bearer some_token")
 
@@ -56,25 +87,5 @@ func TestAuthRequired(t *testing.T) {
 
 		mockClient.AssertExpectations(t)
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
-	})
-
-	t.Run("AuthRequired should set userId in context and call next handler if validation succeeds", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/", nil)
-		req.Header.Set("Authorization", "Bearer some_token")
-
-		mockClient.On("Validate", mock.Anything, &pb.ValidateRequest{Token: "some_token"}).
-			Return(&pb.ValidateResponse{Status: http.StatusOK, UserId: 1}, nil)
-
-		router.GET("/", func(ctx *gin.Context) {
-			userId, exists := ctx.Get("user_id")
-			assert.True(t, exists)
-			assert.Equal(t, int64(1), userId)
-			ctx.Status(http.StatusOK)
-		})
-
-		w := performRequest(router, req)
-
-		mockClient.AssertExpectations(t)
-		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }
