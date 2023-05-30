@@ -68,7 +68,7 @@ func TestRegister(t *testing.T) {
 		assert.Equal(t, expectedResponseBody, recorder.Body.String())
 	})
 
-	t.Run("Login Method to return status 400 BadRequest for invalid request", func(t *testing.T) {
+	t.Run("Register Method to return status 400 BadRequest for invalid request", func(t *testing.T) {
 		jsonBody := `{"email": 1, "password": 2}`
 		req, err := http.NewRequest("POST", "/register", strings.NewReader(jsonBody))
 		assert.NoError(t, err)
