@@ -6,6 +6,8 @@ option go_package = "./pkg/order/pb";
 
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+  rpc GetAllOrders(GetAllOrdersRequest) returns (GetAllOrdersResponse) {}
 }
 
 message CreateOrderRequest {
@@ -18,4 +20,39 @@ message CreateOrderResponse {
   int64 status = 1;
   string error = 2;
   int64 id = 3;
+}
+
+message GetOrderData {
+  int64 id = 1;
+  int64 itemId = 2;
+  string name = 3;
+  int64 quantity = 4;
+  double price = 5;
+}
+
+message GetOrderRequest {
+  int64 id = 1; 
+  int64 userId = 2;
+}
+
+message GetOrderResponse {
+  int64 status = 1;
+  string error = 2;
+  GetOrderData data = 3;
+}
+
+message GetAllOrdersData {
+  int64 id = 1;
+  int64 itemId = 2;
+  int64 quantity = 3;
+}
+
+message GetAllOrdersRequest {
+  int64 userId = 2;
+}
+
+message GetAllOrdersResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated GetAllOrdersData data = 3;
 }
