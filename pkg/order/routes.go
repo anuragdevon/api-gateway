@@ -33,5 +33,5 @@ func (svc *ServiceClient) GetOrder(ctx *gin.Context) {
 }
 
 func (svc *ServiceClient) GetAllOrders(ctx *gin.Context) {
-	// routes.GetAllOrders(ctx, svc.Client)
+	routes.GetAllOrders(ctx, svc.Client)
 }
