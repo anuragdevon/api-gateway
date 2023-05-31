@@ -127,7 +127,7 @@ func TestCreateItem(t *testing.T) {
 		assert.Equal(t, http.StatusBadGateway, recorder.Code)
 	})
 
-	t.Run("CreateItem Method to return status 403 StatusForbidden for invalid user type", func(t *testing.T) {
+	t.Run("CreateItem Method to return status 403 StatusForbidden for Non-Admin user type", func(t *testing.T) {
 		router := gin.New()
 
 		mockClient := new(mocks.InventoryServiceClient)
