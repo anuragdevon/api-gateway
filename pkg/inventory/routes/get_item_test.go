@@ -16,16 +16,17 @@ import (
 
 func TestGetItem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	router := gin.New()
-
-	mockClient := new(mocks.InventoryServiceClient)
-
-	var inventoryServiceClient pb.InventoryServiceClient = mockClient
-	router.GET("/inventory/:id", func(ctx *gin.Context) {
-		GetItem(ctx, inventoryServiceClient)
-	})
 
 	t.Run("GetItem method to return status 200 OK and item details for a valid item ID", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.InventoryServiceClient)
+
+		var inventoryServiceClient pb.InventoryServiceClient = mockClient
+		router.GET("/inventory/:id", func(ctx *gin.Context) {
+			GetItem(ctx, inventoryServiceClient)
+		})
+
 		itemID := "123"
 		req, err := http.NewRequest("GET", "/inventory/"+itemID, nil)
 		assert.NoError(t, err)
@@ -57,6 +58,14 @@ func TestGetItem(t *testing.T) {
 	})
 
 	t.Run("GetItem method to return status 502 BadGateway for an error from the inventory service", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.InventoryServiceClient)
+
+		var inventoryServiceClient pb.InventoryServiceClient = mockClient
+		router.GET("/inventory/:id", func(ctx *gin.Context) {
+			GetItem(ctx, inventoryServiceClient)
+		})
 
 		itemID := "456"
 		req, err := http.NewRequest("GET", "/inventory/"+itemID, nil)

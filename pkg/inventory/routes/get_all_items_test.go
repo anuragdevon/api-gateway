@@ -16,16 +16,17 @@ import (
 
 func TestGetAllItems(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	router := gin.New()
-
-	mockClient := new(mocks.InventoryServiceClient)
-
-	var inventoryServiceClient pb.InventoryServiceClient = mockClient
-	router.GET("/inventory", func(ctx *gin.Context) {
-		GetAllItems(ctx, inventoryServiceClient)
-	})
 
 	t.Run("GetAllItems method to return status 200 OK and all item details", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.InventoryServiceClient)
+
+		var inventoryServiceClient pb.InventoryServiceClient = mockClient
+		router.GET("/inventory", func(ctx *gin.Context) {
+			GetAllItems(ctx, inventoryServiceClient)
+		})
+
 		req, err := http.NewRequest("GET", "/inventory", nil)
 		assert.NoError(t, err)
 
@@ -62,6 +63,15 @@ func TestGetAllItems(t *testing.T) {
 	})
 
 	t.Run("GetAllItems method to return status 502 BadGateway for an error from the inventory service", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.InventoryServiceClient)
+
+		var inventoryServiceClient pb.InventoryServiceClient = mockClient
+		router.GET("/inventory", func(ctx *gin.Context) {
+			GetAllItems(ctx, inventoryServiceClient)
+		})
+
 		req, err := http.NewRequest("GET", "/inventory", nil)
 		assert.NoError(t, err)
 

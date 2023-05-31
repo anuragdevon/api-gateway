@@ -72,6 +72,7 @@ func TestCreateItem(t *testing.T) {
 
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.POST("/inventory", func(ctx *gin.Context) {
+			ctx.Set("UserType", authpb.UserType_ADMIN)
 			CreateItem(ctx, inventoryServiceClient)
 		})
 
@@ -99,6 +100,7 @@ func TestCreateItem(t *testing.T) {
 
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.POST("/inventory", func(ctx *gin.Context) {
+			ctx.Set("UserType", authpb.UserType_ADMIN)
 			CreateItem(ctx, inventoryServiceClient)
 		})
 
@@ -125,32 +127,34 @@ func TestCreateItem(t *testing.T) {
 		assert.Equal(t, http.StatusBadGateway, recorder.Code)
 	})
 
-	t.Run("CreateItem Method to return status 403 StatusForbidden for invalid user type", func(t *testing.T) {
+	t.Run("CreateItem Method to return status 403 StatusForbidden for Non-Admin user type", func(t *testing.T) {
 		router := gin.New()
 
 		mockClient := new(mocks.InventoryServiceClient)
 
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.POST("/inventory", func(ctx *gin.Context) {
+			ctx.Set("UserType", authpb.UserType_CUSTOMER)
 			CreateItem(ctx, inventoryServiceClient)
 		})
 
-		jsonBody := `{"name":"Test Product","quantity":10,"price":100}`
+		expectedRequest := &pb.CreateItemRequest{
+			Name:     "Test Product",
+			Quantity: 10,
+			Price:    100,
+		}
 
+		mockClient.On("CreateItem", mock.Anything, expectedRequest).Return(nil, nil)
+
+		jsonBody := `{"name":"Test Product","quantity":10,"price":100}`
 		req, err := http.NewRequest("POST", "/inventory", strings.NewReader(jsonBody))
 		assert.NoError(t, err)
 
 		req.Header.Set("Content-Type", "application/json")
 
-		ctx := &gin.Context{
-			Request: req,
-		}
-		ctx.Set("UserType", authpb.UserType_CUSTOMER)
-
 		recorder := httptest.NewRecorder()
 
-		CreateItem(ctx, inventoryServiceClient)
-
+		router.ServeHTTP(recorder, req)
 		assert.Equal(t, http.StatusForbidden, recorder.Code)
 	})
 }
