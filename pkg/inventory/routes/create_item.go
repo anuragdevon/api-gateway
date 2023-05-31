@@ -5,10 +5,9 @@ import (
 	"errors"
 	"net/http"
 
+	authpb "api-gateway/pkg/auth/pb"
 	"api-gateway/pkg/inventory/pb"
 	"api-gateway/pkg/inventory/routes/dto"
-
-	authpb "api-gateway/pkg/auth/pb"
 
 	"github.com/gin-gonic/gin"
 )
