@@ -22,6 +22,7 @@ spec:
       containers:
         - name: auth-svc
           image: auth_svc:latest
+          imagePullPolicy: Never  
           ports:
             - containerPort: 8010
 
@@ -58,6 +59,7 @@ spec:
       containers:
         - name: order-svc
           image: order_svc:latest
+          imagePullPolicy: Never  
           ports:
             - containerPort: 8030
 
@@ -94,6 +96,7 @@ spec:
       containers:
         - name: inventory-svc
           image: inventory-app:latest
+          imagePullPolicy: Never  
           ports:
             - containerPort: 8020
 
@@ -130,6 +133,7 @@ spec:
       containers:
         - name: api-gateway
           image: api-gateway:latest
+          imagePullPolicy: Never  
           ports:
             - containerPort: 8000
 
