@@ -1,17 +1,16 @@
 syntax = "proto3";
 
-package inventory;
+package com.example.Inventory;;
 
 option go_package = "./pkg/inventory/pb";
 
 service InventoryService {
-  rpc createItem(CreateItemRequest) returns (CreateItemResponse) {}
-  rpc getItem(GetItemRequest) returns (GetItemResponse) {}
-  rpc getAllItems(GetAllItemsRequest) returns (GetAllItemsResponse) {}
-  rpc updateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
-  rpc deleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
-  rpc decreaseItemQuantity(DecreaseItemQuantityRequest) returns (DecreaseItemQuantityResponse) {}
-
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
+  rpc GetAllInventoryItems(GetAllInventoryItemsRequest) returns (GetAllInventoryItemsResponse) {}
+  rpc GetAllItems(GetAllItemsRequest) returns (GetAllItemsResponse) {}
+  rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
 }
 
 message CreateItemRequest {
@@ -28,7 +27,8 @@ message CreateItemResponse {
 }
 
 message GetItemRequest { 
-  int64 id = 1; 
+  int64 id = 1;
+  int64 userid = 2; 
 }
 
 message GetItemData {
@@ -44,7 +44,17 @@ message GetItemResponse {
   GetItemData data = 3;
 }
 
-message GetAllItemsRequest {}
+message GetAllInventoryItemsRequest {}
+
+message GetAllInventoryItemsResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated GetItemData data = 3;
+}
+
+message GetAllItemsRequest {
+  int64 userid = 1;
+}
 
 message GetAllItemsResponse {
   int64 status = 1;
@@ -57,6 +67,7 @@ message UpdateItemRequest {
   string name = 2;
   int64 quantity = 3;
   double price = 4;
+  int64 userid = 5;
 }
 
 message UpdateItemResponse {
@@ -67,19 +78,10 @@ message UpdateItemResponse {
 
 message DeleteItemRequest {
   int64 id = 1;
+  int64 userid = 2;
 }
 
 message DeleteItemResponse {
-  int64 status = 1;
-  string error = 2;
-}
-
-message DecreaseItemQuantityRequest {
-  int64 id = 1;
-  int64 quantity = 2;
-}
-
-message DecreaseItemQuantityResponse {
   int64 status = 1;
   string error = 2;
 }

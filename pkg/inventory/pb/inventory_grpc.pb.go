@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	InventoryService_CreateItem_FullMethodName           = "/com.example.Inventory.Inventory/CreateItem"
-	InventoryService_GetItem_FullMethodName              = "/com.example.Inventory.Inventory/GetItem"
-	InventoryService_GetAllItems_FullMethodName          = "/com.example.Inventory.Inventory/GetAllItems"
-	InventoryService_UpdateItem_FullMethodName           = "/com.example.Inventory.Inventory/UpdateItem"
-	InventoryService_DeleteItem_FullMethodName           = "/com.example.Inventory.Inventory/DeleteItem"
-	InventoryService_DecreaseItemQuantity_FullMethodName = "/com.example.Inventory.Inventory/DecreaseItemQuantity"
+	InventoryService_CreateItem_FullMethodName           = "/com.example.Inventory.InventoryService/CreateItem"
+	InventoryService_GetItem_FullMethodName              = "/com.example.Inventory.InventoryService/GetItem"
+	InventoryService_GetAllInventoryItems_FullMethodName = "/com.example.Inventory.InventoryService/GetAllInventoryItems"
+	InventoryService_GetAllItems_FullMethodName          = "/com.example.Inventory.InventoryService/GetAllItems"
+	InventoryService_UpdateItem_FullMethodName           = "/com.example.Inventory.InventoryService/UpdateItem"
+	InventoryService_DeleteItem_FullMethodName           = "/com.example.Inventory.InventoryService/DeleteItem"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
@@ -33,10 +33,10 @@ const (
 type InventoryServiceClient interface {
 	CreateItem(ctx context.Context, in *CreateItemRequest, opts ...grpc.CallOption) (*CreateItemResponse, error)
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
+	GetAllInventoryItems(ctx context.Context, in *GetAllInventoryItemsRequest, opts ...grpc.CallOption) (*GetAllInventoryItemsResponse, error)
 	GetAllItems(ctx context.Context, in *GetAllItemsRequest, opts ...grpc.CallOption) (*GetAllItemsResponse, error)
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error)
 	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error)
-	DecreaseItemQuantity(ctx context.Context, in *DecreaseItemQuantityRequest, opts ...grpc.CallOption) (*DecreaseItemQuantityResponse, error)
 }
 
 type inventoryServiceClient struct {
@@ -59,6 +59,15 @@ func (c *inventoryServiceClient) CreateItem(ctx context.Context, in *CreateItemR
 func (c *inventoryServiceClient) GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error) {
 	out := new(GetItemResponse)
 	err := c.cc.Invoke(ctx, InventoryService_GetItem_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inventoryServiceClient) GetAllInventoryItems(ctx context.Context, in *GetAllInventoryItemsRequest, opts ...grpc.CallOption) (*GetAllInventoryItemsResponse, error) {
+	out := new(GetAllInventoryItemsResponse)
+	err := c.cc.Invoke(ctx, InventoryService_GetAllInventoryItems_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,25 +101,16 @@ func (c *inventoryServiceClient) DeleteItem(ctx context.Context, in *DeleteItemR
 	return out, nil
 }
 
-func (c *inventoryServiceClient) DecreaseItemQuantity(ctx context.Context, in *DecreaseItemQuantityRequest, opts ...grpc.CallOption) (*DecreaseItemQuantityResponse, error) {
-	out := new(DecreaseItemQuantityResponse)
-	err := c.cc.Invoke(ctx, InventoryService_DecreaseItemQuantity_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // InventoryServiceServer is the server API for InventoryService service.
 // All implementations must embed UnimplementedInventoryServiceServer
 // for forward compatibility
 type InventoryServiceServer interface {
 	CreateItem(context.Context, *CreateItemRequest) (*CreateItemResponse, error)
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
+	GetAllInventoryItems(context.Context, *GetAllInventoryItemsRequest) (*GetAllInventoryItemsResponse, error)
 	GetAllItems(context.Context, *GetAllItemsRequest) (*GetAllItemsResponse, error)
 	UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error)
 	DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error)
-	DecreaseItemQuantity(context.Context, *DecreaseItemQuantityRequest) (*DecreaseItemQuantityResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
 
@@ -124,6 +124,9 @@ func (UnimplementedInventoryServiceServer) CreateItem(context.Context, *CreateIt
 func (UnimplementedInventoryServiceServer) GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetItem not implemented")
 }
+func (UnimplementedInventoryServiceServer) GetAllInventoryItems(context.Context, *GetAllInventoryItemsRequest) (*GetAllInventoryItemsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllInventoryItems not implemented")
+}
 func (UnimplementedInventoryServiceServer) GetAllItems(context.Context, *GetAllItemsRequest) (*GetAllItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllItems not implemented")
 }
@@ -132,9 +135,6 @@ func (UnimplementedInventoryServiceServer) UpdateItem(context.Context, *UpdateIt
 }
 func (UnimplementedInventoryServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteItem not implemented")
-}
-func (UnimplementedInventoryServiceServer) DecreaseItemQuantity(context.Context, *DecreaseItemQuantityRequest) (*DecreaseItemQuantityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DecreaseItemQuantity not implemented")
 }
 func (UnimplementedInventoryServiceServer) mustEmbedUnimplementedInventoryServiceServer() {}
 
@@ -181,6 +181,24 @@ func _InventoryService_GetItem_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(InventoryServiceServer).GetItem(ctx, req.(*GetItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InventoryService_GetAllInventoryItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllInventoryItemsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).GetAllInventoryItems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_GetAllInventoryItems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).GetAllInventoryItems(ctx, req.(*GetAllInventoryItemsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -239,54 +257,36 @@ func _InventoryService_DeleteItem_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InventoryService_DecreaseItemQuantity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DecreaseItemQuantityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InventoryServiceServer).DecreaseItemQuantity(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: InventoryService_DecreaseItemQuantity_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).DecreaseItemQuantity(ctx, req.(*DecreaseItemQuantityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // InventoryService_ServiceDesc is the grpc.ServiceDesc for InventoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var InventoryService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "inventory.InventoryService",
+	ServiceName: "com.example.Inventory.InventoryService",
 	HandlerType: (*InventoryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "createItem",
+			MethodName: "CreateItem",
 			Handler:    _InventoryService_CreateItem_Handler,
 		},
 		{
-			MethodName: "getItem",
+			MethodName: "GetItem",
 			Handler:    _InventoryService_GetItem_Handler,
 		},
 		{
-			MethodName: "getAllItems",
+			MethodName: "GetAllInventoryItems",
+			Handler:    _InventoryService_GetAllInventoryItems_Handler,
+		},
+		{
+			MethodName: "GetAllItems",
 			Handler:    _InventoryService_GetAllItems_Handler,
 		},
 		{
-			MethodName: "updateItem",
+			MethodName: "UpdateItem",
 			Handler:    _InventoryService_UpdateItem_Handler,
 		},
 		{
-			MethodName: "deleteItem",
+			MethodName: "DeleteItem",
 			Handler:    _InventoryService_DeleteItem_Handler,
-		},
-		{
-			MethodName: "decreaseItemQuantity",
-			Handler:    _InventoryService_DecreaseItemQuantity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
