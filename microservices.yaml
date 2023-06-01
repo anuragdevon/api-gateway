@@ -1,0 +1,149 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: microservices
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-svc-deployment
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-svc
+  template:
+    metadata:
+      labels:
+        app: auth-svc
+    spec:
+      containers:
+        - name: auth-svc
+          image: auth_svc:latest
+          ports:
+            - containerPort: 8010
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-svc-service
+  namespace: microservices
+spec:
+  selector:
+    app: auth-svc
+  ports:
+    - protocol: TCP
+      port: 8010
+      targetPort: 8010
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-svc-deployment
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-svc
+  template:
+    metadata:
+      labels:
+        app: order-svc
+    spec:
+      containers:
+        - name: order-svc
+          image: order_svc:latest
+          ports:
+            - containerPort: 8030
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-svc-service
+  namespace: microservices
+spec:
+  selector:
+    app: order-svc
+  ports:
+    - protocol: TCP
+      port: 8030
+      targetPort: 8030
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-svc-deployment
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-svc
+  template:
+    metadata:
+      labels:
+        app: inventory-svc
+    spec:
+      containers:
+        - name: inventory-svc
+          image: inventory-app:latest
+          ports:
+            - containerPort: 8020
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-svc-service
+  namespace: microservices
+spec:
+  selector:
+    app: inventory-svc
+  ports:
+    - protocol: TCP
+      port: 8020
+      targetPort: 8020
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: api-gateway:latest
+          ports:
+            - containerPort: 8000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-service
+  namespace: microservices
+spec:
+  selector:
+    app: api-gateway
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: NodePort
