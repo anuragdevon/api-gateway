@@ -28,6 +28,7 @@ func TestUpdateItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.PUT("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_ADMIN)
+			ctx.Set("UserId", int64(123))
 			UpdateItem(ctx, inventoryServiceClient)
 		})
 
@@ -51,6 +52,7 @@ func TestUpdateItem(t *testing.T) {
 			Name:     requestBody.Name,
 			Quantity: requestBody.Quantity,
 			Price:    requestBody.Price,
+			Userid:   123,
 		}
 		expectedResponse := &pb.UpdateItemResponse{
 			Status: 200,
@@ -75,6 +77,7 @@ func TestUpdateItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.PUT("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_ADMIN)
+			ctx.Set("UserId", int64(123))
 			UpdateItem(ctx, inventoryServiceClient)
 		})
 
@@ -107,6 +110,7 @@ func TestUpdateItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.PUT("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_ADMIN)
+			ctx.Set("UserId", int64(123))
 			UpdateItem(ctx, inventoryServiceClient)
 		})
 
@@ -130,7 +134,9 @@ func TestUpdateItem(t *testing.T) {
 			Name:     requestBody.Name,
 			Quantity: requestBody.Quantity,
 			Price:    requestBody.Price,
+			Userid:   123,
 		}
+
 		mockClient.On("UpdateItem", mock.Anything, expectedRequest).Return(nil, errors.New("bad gateway error"))
 
 		router.ServeHTTP(recorder, req)
@@ -148,6 +154,7 @@ func TestUpdateItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.PUT("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_CUSTOMER)
+			ctx.Set("UserId", int64(123))
 			UpdateItem(ctx, inventoryServiceClient)
 		})
 
@@ -171,6 +178,7 @@ func TestUpdateItem(t *testing.T) {
 			Name:     requestBody.Name,
 			Quantity: requestBody.Quantity,
 			Price:    requestBody.Price,
+			Userid:   123,
 		}
 		mockClient.On("UpdateItem", mock.Anything, expectedRequest).Return(nil, nil)
 

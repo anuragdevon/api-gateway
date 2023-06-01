@@ -18,6 +18,9 @@ func UpdateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}
+
+	userId := ctx.GetInt64("UserId")
+
 	body := dto.UpdateItemRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {
@@ -30,6 +33,7 @@ func UpdateItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 		Name:     body.Name,
 		Quantity: body.Quantity,
 		Price:    body.Price,
+		Userid:   userId,
 	})
 
 	if err != nil {

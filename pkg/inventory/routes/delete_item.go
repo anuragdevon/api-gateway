@@ -20,8 +20,11 @@ func DeleteItem(ctx *gin.Context, c pb.InventoryServiceClient) {
 	}
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 32)
 
+	userId := ctx.GetInt64("UserId")
+
 	res, err := c.DeleteItem(context.Background(), &pb.DeleteItemRequest{
-		Id: int64(id),
+		Id:     int64(id),
+		Userid: userId,
 	})
 
 	if err != nil {

@@ -1,17 +1,28 @@
 package routes
 
 import (
+	"api-gateway/pkg/inventory/pb"
 	"context"
+	"errors"
 	"net/http"
 
-	"api-gateway/pkg/inventory/pb"
-
 	"github.com/gin-gonic/gin"
+
+	authpb "api-gateway/pkg/auth/pb"
 )
 
 func GetAllItems(ctx *gin.Context, c pb.InventoryServiceClient) {
+	userType, _ := ctx.Get("UserType")
+	if userType != authpb.UserType_CUSTOMER {
+		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
+		return
+	}
 
-	res, err := c.GetAllItems(context.Background(), &pb.GetAllItemsRequest{})
+	userId := ctx.GetInt64("UserId")
+
+	res, err := c.GetAllItems(context.Background(), &pb.GetAllItemsRequest{
+		Userid: userId,
+	})
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadGateway, err)

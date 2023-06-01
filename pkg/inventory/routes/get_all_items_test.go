@@ -24,6 +24,7 @@ func TestGetAllItems(t *testing.T) {
 
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.GET("/inventory", func(ctx *gin.Context) {
+			ctx.Set("UserId", int64(123))
 			GetAllItems(ctx, inventoryServiceClient)
 		})
 
@@ -32,7 +33,9 @@ func TestGetAllItems(t *testing.T) {
 
 		recorder := httptest.NewRecorder()
 
-		expectedRequest := &pb.GetAllItemsRequest{}
+		expectedRequest := &pb.GetAllItemsRequest{
+			Userid: 123,
+		}
 		expectedResponse := &pb.GetAllItemsResponse{
 			Status: 200,
 			Data: []*pb.GetItemData{
@@ -69,6 +72,7 @@ func TestGetAllItems(t *testing.T) {
 
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.GET("/inventory", func(ctx *gin.Context) {
+			ctx.Set("UserId", int64(123))
 			GetAllItems(ctx, inventoryServiceClient)
 		})
 
@@ -77,7 +81,9 @@ func TestGetAllItems(t *testing.T) {
 
 		recorder := httptest.NewRecorder()
 
-		expectedRequest := &pb.GetAllItemsRequest{}
+		expectedRequest := &pb.GetAllItemsRequest{
+			Userid: 123,
+		}
 		mockClient.On("GetAllItems", mock.Anything, expectedRequest).Return(nil, errors.New("bad gateway error"))
 
 		router.ServeHTTP(recorder, req)

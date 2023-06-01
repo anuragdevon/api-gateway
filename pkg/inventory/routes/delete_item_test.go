@@ -25,6 +25,7 @@ func TestDeleteItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.DELETE("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_ADMIN)
+			ctx.Set("UserId", int64(123))
 			DeleteItem(ctx, inventoryServiceClient)
 		})
 
@@ -35,7 +36,8 @@ func TestDeleteItem(t *testing.T) {
 		recorder := httptest.NewRecorder()
 
 		expectedRequest := &pb.DeleteItemRequest{
-			Id: 123,
+			Id:     123,
+			Userid: 123,
 		}
 		expectedResponse := &pb.DeleteItemResponse{
 			Status: 200,
@@ -60,6 +62,7 @@ func TestDeleteItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.DELETE("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_ADMIN)
+			ctx.Set("UserId", int64(123))
 			DeleteItem(ctx, inventoryServiceClient)
 		})
 
@@ -70,7 +73,8 @@ func TestDeleteItem(t *testing.T) {
 		recorder := httptest.NewRecorder()
 
 		expectedRequest := &pb.DeleteItemRequest{
-			Id: 456,
+			Id:     456,
+			Userid: 123,
 		}
 		mockClient.On("DeleteItem", mock.Anything, expectedRequest).Return(nil, errors.New("bad gateway error"))
 
@@ -89,6 +93,7 @@ func TestDeleteItem(t *testing.T) {
 		var inventoryServiceClient pb.InventoryServiceClient = mockClient
 		router.DELETE("/inventory/:id", func(ctx *gin.Context) {
 			ctx.Set("UserType", authpb.UserType_CUSTOMER)
+			ctx.Set("UserId", int64(124))
 			DeleteItem(ctx, inventoryServiceClient)
 		})
 
@@ -99,7 +104,8 @@ func TestDeleteItem(t *testing.T) {
 		recorder := httptest.NewRecorder()
 
 		expectedRequest := &pb.DeleteItemRequest{
-			Id: 456,
+			Id:     456,
+			Userid: 124,
 		}
 		mockClient.On("DeleteItem", mock.Anything, expectedRequest).Return(nil, nil)
 
