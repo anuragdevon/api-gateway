@@ -22,6 +22,7 @@ func RegisterRoutes(r *gin.Engine, c *config.Config, authSvc *auth.ServiceClient
 	routes.POST("", svc.CreateItem)
 	routes.GET("/:id", svc.GetItem)
 	routes.GET("", svc.GetAllItems)
+	routes.GET("/items", svc.GetAllInventoryItems)
 	routes.PUT("/:id", svc.UpdateItem)
 	routes.DELETE("/:id", svc.DeleteItem)
 }
@@ -36,6 +37,10 @@ func (svc *ServiceClient) GetItem(ctx *gin.Context) {
 
 func (svc *ServiceClient) GetAllItems(ctx *gin.Context) {
 	routes.GetAllItems(ctx, svc.Client)
+}
+
+func (svc *ServiceClient) GetAllInventoryItems(ctx *gin.Context) {
+	routes.GetAllInventoryItems(ctx, svc.Client)
 }
 
 func (svc *ServiceClient) UpdateItem(ctx *gin.Context) {

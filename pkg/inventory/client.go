@@ -7,6 +7,7 @@ import (
 	"api-gateway/pkg/inventory/pb"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type ServiceClient struct {
@@ -14,7 +15,7 @@ type ServiceClient struct {
 }
 
 func InitServiceClient(c *config.Config) pb.InventoryServiceClient {
-	cc, err := grpc.Dial(c.InventorySvcUrl, grpc.WithInsecure())
+	cc, err := grpc.Dial(c.InventorySvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		fmt.Println("Could not connect:", err)
