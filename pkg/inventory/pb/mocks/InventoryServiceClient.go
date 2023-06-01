@@ -50,39 +50,6 @@ func (_m *InventoryServiceClient) CreateItem(ctx context.Context, in *pb.CreateI
 	return r0, r1
 }
 
-// DecreaseItemQuantity provides a mock function with given fields: ctx, in, opts
-func (_m *InventoryServiceClient) DecreaseItemQuantity(ctx context.Context, in *pb.DecreaseItemQuantityRequest, opts ...grpc.CallOption) (*pb.DecreaseItemQuantityResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *pb.DecreaseItemQuantityResponse
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *pb.DecreaseItemQuantityRequest, ...grpc.CallOption) (*pb.DecreaseItemQuantityResponse, error)); ok {
-		return rf(ctx, in, opts...)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *pb.DecreaseItemQuantityRequest, ...grpc.CallOption) *pb.DecreaseItemQuantityResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*pb.DecreaseItemQuantityResponse)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *pb.DecreaseItemQuantityRequest, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // DeleteItem provides a mock function with given fields: ctx, in, opts
 func (_m *InventoryServiceClient) DeleteItem(ctx context.Context, in *pb.DeleteItemRequest, opts ...grpc.CallOption) (*pb.DeleteItemResponse, error) {
 	_va := make([]interface{}, len(opts))
@@ -108,6 +75,39 @@ func (_m *InventoryServiceClient) DeleteItem(ctx context.Context, in *pb.DeleteI
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *pb.DeleteItemRequest, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetAllInventoryItems provides a mock function with given fields: ctx, in, opts
+func (_m *InventoryServiceClient) GetAllInventoryItems(ctx context.Context, in *pb.GetAllInventoryItemsRequest, opts ...grpc.CallOption) (*pb.GetAllInventoryItemsResponse, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *pb.GetAllInventoryItemsResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *pb.GetAllInventoryItemsRequest, ...grpc.CallOption) (*pb.GetAllInventoryItemsResponse, error)); ok {
+		return rf(ctx, in, opts...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *pb.GetAllInventoryItemsRequest, ...grpc.CallOption) *pb.GetAllInventoryItemsResponse); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*pb.GetAllInventoryItemsResponse)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *pb.GetAllInventoryItemsRequest, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
