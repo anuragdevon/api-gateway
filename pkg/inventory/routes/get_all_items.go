@@ -13,7 +13,7 @@ import (
 
 func GetAllItems(ctx *gin.Context, c pb.InventoryServiceClient) {
 	userType, _ := ctx.Get("UserType")
-	if userType != authpb.UserType_CUSTOMER {
+	if userType != authpb.UserType_ADMIN {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("invalid user type"))
 		return
 	}

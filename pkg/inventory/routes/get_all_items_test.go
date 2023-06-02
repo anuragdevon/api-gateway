@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	authpb "api-gateway/pkg/auth/pb"
 	"api-gateway/pkg/inventory/pb"
 	"api-gateway/pkg/inventory/pb/mocks"
 )
@@ -91,5 +92,27 @@ func TestGetAllItems(t *testing.T) {
 		mockClient.AssertCalled(t, "GetAllItems", mock.Anything, expectedRequest)
 
 		assert.Equal(t, http.StatusBadGateway, recorder.Code)
+	})
+
+	t.Run("GetAllItems method to return status 403 StatusForbidden for Non-Admin user type", func(t *testing.T) {
+		router := gin.New()
+
+		mockClient := new(mocks.InventoryServiceClient)
+
+		var inventoryServiceClient pb.InventoryServiceClient = mockClient
+		router.GET("/inventory", func(ctx *gin.Context) {
+			ctx.Set("UserType", authpb.UserType_CUSTOMER)
+			ctx.Set("UserId", int64(123))
+			GetAllItems(ctx, inventoryServiceClient)
+		})
+
+		req, err := http.NewRequest("GET", "/inventory", nil)
+		assert.NoError(t, err)
+
+		recorder := httptest.NewRecorder()
+
+		router.ServeHTTP(recorder, req)
+
+		assert.Equal(t, http.StatusForbidden, recorder.Code)
 	})
 }

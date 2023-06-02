@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	InventoryService_CreateItem_FullMethodName           = "/com.example.Inventory.InventoryService/CreateItem"
-	InventoryService_GetItem_FullMethodName              = "/com.example.Inventory.InventoryService/GetItem"
-	InventoryService_GetAllInventoryItems_FullMethodName = "/com.example.Inventory.InventoryService/GetAllInventoryItems"
-	InventoryService_GetAllItems_FullMethodName          = "/com.example.Inventory.InventoryService/GetAllItems"
-	InventoryService_UpdateItem_FullMethodName           = "/com.example.Inventory.InventoryService/UpdateItem"
-	InventoryService_DeleteItem_FullMethodName           = "/com.example.Inventory.InventoryService/DeleteItem"
+	InventoryService_CreateItem_FullMethodName           = "/com.example.Inventory.Inventory/CreateItem"
+	InventoryService_GetItem_FullMethodName              = "/com.example.Inventory.Inventory/GetItem"
+	InventoryService_GetAllInventoryItems_FullMethodName = "/com.example.Inventory.Inventory/GetAllInventoryItems"
+	InventoryService_GetAllItems_FullMethodName          = "/com.example.Inventory.Inventory/GetAllItems"
+	InventoryService_UpdateItem_FullMethodName           = "/com.example.Inventory.Inventory/UpdateItem"
+	InventoryService_DeleteItem_FullMethodName           = "/com.example.Inventory.Inventory/DeleteItem"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
