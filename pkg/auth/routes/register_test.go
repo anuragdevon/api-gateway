@@ -88,6 +88,22 @@ func TestRegister(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 	})
 
+	t.Run("Register Method to return status 400 BadRequest for invalid user type", func(t *testing.T) {
+		jsonBody := `{"email":"testregister@example.com","password":"password", "user_type": "invalid"}`
+		req, err := http.NewRequest("POST", "/register", strings.NewReader(jsonBody))
+		assert.NoError(t, err)
+
+		req.Header.Set("Content-Type", "application/json")
+
+		recorder := httptest.NewRecorder()
+
+		router.ServeHTTP(recorder, req)
+
+		mockClient.AssertNotCalled(t, "Register")
+
+		assert.Equal(t, http.StatusBadRequest, recorder.Code)
+	})
+
 	t.Run("Register Method to return status 502 BadGateway for bad gateway error", func(t *testing.T) {
 		expectedRequest := &pb.RegisterRequest{
 			Email:    "testregister3@example.com",

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"api-gateway/pkg/auth/pb"
@@ -17,11 +18,16 @@ func Register(ctx *gin.Context, c pb.AuthServiceClient) {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+	userType, ok := dto.UserTypeMap[body.UserType]
+	if !ok {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid user type"))
+		return
+	}
 
 	res, err := c.Register(context.Background(), &pb.RegisterRequest{
 		Email:    body.Email,
 		Password: body.Password,
-		UserType: dto.UserTypeMap[body.UserType],
+		UserType: userType,
 	})
 
 	if err != nil {
