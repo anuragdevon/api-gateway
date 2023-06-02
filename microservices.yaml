@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: microservices
-  
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -51,21 +51,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-svc-deployment
+  name: auth-deployment
   namespace: microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-svc
+      app: auth
   template:
     metadata:
       labels:
-        app: auth-svc
+        app: auth
     spec:
       containers:
-        - name: auth-svc
-          image: auth-svc:latest
+        - name: auth
+          image: auth:latest
           imagePullPolicy: Never  
           ports:
             - containerPort: 8010
@@ -74,11 +74,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-svc-service
+  name: auth-service
   namespace: microservices
 spec:
   selector:
-    app: auth-svc
+    app: auth
   ports:
     - protocol: TCP
       port: 8010
@@ -88,21 +88,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-svc-deployment
+  name: order-deployment
   namespace: microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: order-svc
+      app: order
   template:
     metadata:
       labels:
-        app: order-svc
+        app: order
     spec:
       containers:
-        - name: order-svc
-          image: order-svc:latest
+        - name: order
+          image: order:latest
           imagePullPolicy: Never  
           ports:
             - containerPort: 8030
@@ -111,11 +111,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: order-svc-service
+  name: order-service
   namespace: microservices
 spec:
   selector:
-    app: order-svc
+    app: order
   ports:
     - protocol: TCP
       port: 8030
@@ -125,21 +125,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inventory-svc-deployment
+  name: inventory-deployment
   namespace: microservices
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: inventory-svc
+      app: inventory
   template:
     metadata:
       labels:
-        app: inventory-svc
+        app: inventory
     spec:
       containers:
-        - name: inventory-svc
-          image: inventory-svc:latest
+        - name: inventory
+          image: inventory:latest
           imagePullPolicy: Never  
           ports:
             - containerPort: 8020
@@ -148,11 +148,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: inventory-svc-service
+  name: inventory-service
   namespace: microservices
 spec:
   selector:
-    app: inventory-svc
+    app: inventory
   ports:
     - protocol: TCP
       port: 8020
